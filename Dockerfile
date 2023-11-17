@@ -9,8 +9,8 @@ WORKDIR /opt/app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . ./
-RUN go build -trimpath -ldflags="-w -s" -o "pinot-client-go"
+RUN go build -trimpath -ldflags="-w -s" -o "pinot"
 
 FROM gcr.io/distroless/base-debian11 as dev
-COPY --from=builder opt/app/pinot-client-go /pinot-client-go
-CMD ["/pinto-client-go"]
+COPY --from=builder opt/app/pinot /pinot
+CMD ["/pinot"]
