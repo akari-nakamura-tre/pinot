@@ -12,6 +12,7 @@ import (
 
 type SalesService interface {
 	GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) []interface{}
+	GetSalesSummaryByStoreAndDivision(ctx context.Context, storeCode uint32) []interface{}
 }
 
 type salesService struct {
@@ -26,6 +27,15 @@ func NewSalesService(salesRepo repositories.SalesRepository) *salesService {
 
 func (s *salesService) GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) []interface{} {
 	res, err := s.salesRepo.GetSalesSummaryGroupByStoreAndDivision(ctx)
+	jsonRes := util.CreateJSONResponse(res, mapSalesBrokerResponse)
+	if err != nil {
+		log.Error(err)
+	}
+	return jsonRes
+}
+
+func (s *salesService) GetSalesSummaryByStoreAndDivision(ctx context.Context, storeCode uint32) []interface{} {
+	res, err := s.salesRepo.GetSalesSummaryByStoreAndDivision(ctx, storeCode)
 	jsonRes := util.CreateJSONResponse(res, mapSalesBrokerResponse)
 	if err != nil {
 		log.Error(err)

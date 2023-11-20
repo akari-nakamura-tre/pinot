@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/akari-nakamura-tre/pinot/services"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type SalesHandler interface {
 	GetSalesSummaryGroupByStoreAndDivision(c echo.Context) error
+	GetSalesSummaryByStoreAndDivision(c echo.Context) error
 }
 
 type salesHandler struct {
@@ -24,6 +27,18 @@ func NewSalesHandler(salesSvc services.SalesService) *salesHandler {
 func (h *salesHandler) GetSalesSummaryGroupByStoreAndDivision(c echo.Context) error {
 	ctx := c.Request().Context()
 	res := h.salesSvc.GetSalesSummaryGroupByStoreAndDivision(ctx)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": res,
+	})
+}
+
+func (h *salesHandler) GetSalesSummaryByStoreAndDivision(c echo.Context) error {
+	ctx := c.Request().Context()
+	storeCode, err := strconv.Atoi(c.Param("storeCode"))
+	if err != nil {
+		log.Error(err)
+	}
+	res := h.salesSvc.GetSalesSummaryByStoreAndDivision(ctx, uint32(storeCode))
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data": res,
 	})

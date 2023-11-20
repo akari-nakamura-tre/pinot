@@ -37,5 +37,6 @@ func Init(e *echo.Echo, db *pinot.Connection) {
 		salesHdlr: handlers.NewSalesHandler(svcs.salesSvc),
 	}
 	e.GET("/idpos", hdlrs.idPOSHdlr.GetIdPOS)
-	e.GET("/sales/summary", hdlrs.salesHdlr.GetSalesSummaryGroupByStoreAndDivision)
+	e.GET("/sales/summaries", hdlrs.salesHdlr.GetSalesSummaryGroupByStoreAndDivision)
+	e.GET("/sales/summaries/:storeCode", hdlrs.salesHdlr.GetSalesSummaryByStoreAndDivision)
 }
