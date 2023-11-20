@@ -1,0 +1,34 @@
+package repositories
+
+import (
+	"context"
+
+	"github.com/labstack/gommon/log"
+	"github.com/startreedata/pinot-client-go/pinot"
+)
+
+type SalesRepository interface {
+	GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) (*pinot.BrokerResponse, error)
+}
+
+type salesRepository struct {
+	db *pinot.Connection
+}
+
+func NewSalesRepository(db *pinot.Connection) *salesRepository {
+	return &salesRepository{
+		db: db,
+	}
+}
+
+func (r *salesRepository) GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) (*pinot.BrokerResponse, error) {
+	table := "idpos"
+	query := "select storeCode, store, divisionCode, division, sum(totalPrice) as totalPrice from idpos group by storeCode, divisionCode, store, division limit 1000000"
+	brokerResp, err := r.db.ExecuteSQL(table, query)
+	if err != nil {
+		log.Error(err)
+		return &pinot.BrokerResponse{}, err
+	}
+
+	return brokerResp, nil
+}
