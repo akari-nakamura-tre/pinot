@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/akari-nakamura-tre/pinot/db"
+	"github.com/akari-nakamura-tre/pinot/packages/db"
 	"github.com/akari-nakamura-tre/pinot/routers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
