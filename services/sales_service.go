@@ -11,7 +11,7 @@ import (
 )
 
 type SalesService interface {
-	GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) []models.SalesSummary
+	GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) []interface{}
 }
 
 type salesService struct {
@@ -24,27 +24,21 @@ func NewSalesService(salesRepo repositories.SalesRepository) *salesService {
 	}
 }
 
-func (s *salesService) GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) []models.SalesSummary {
+func (s *salesService) GetSalesSummaryGroupByStoreAndDivision(ctx context.Context) []interface{} {
 	res, err := s.salesRepo.GetSalesSummaryGroupByStoreAndDivision(ctx)
-	jsonRes := createJsonResponse(res)
+	jsonRes := util.CreateJSONResponse(res, mapSalesBrokerResponse)
 	if err != nil {
 		log.Error(err)
 	}
 	return jsonRes
 }
 
-func createJsonResponse(brokerResp *pinot.BrokerResponse) []models.SalesSummary {
-	var outputDataSlice []models.SalesSummary
-	for _, row := range brokerResp.ResultTable.Rows {
-		data := models.SalesSummary{
-			StoreCode:    util.GetInt32Value(brokerResp.ResultTable, row, "storeCode"),
-			Store:        util.GetStringValue(brokerResp.ResultTable, row, "store"),
-			DivisionCode: util.GetInt32Value(brokerResp.ResultTable, row, "divisionCode"),
-			Division:     util.GetStringValue(brokerResp.ResultTable, row, "division"),
-			TotalPrice:   util.GetInt32Value(brokerResp.ResultTable, row, "totalPrice"),
-		}
-		outputDataSlice = append(outputDataSlice, data)
+func mapSalesBrokerResponse(table *pinot.ResultTable, row []interface{}) interface{} {
+	return models.SalesSummary{
+		StoreCode:    util.GetInt32Value(table, row, "storeCode"),
+		Store:        util.GetStringValue(table, row, "store"),
+		DivisionCode: util.GetInt32Value(table, row, "divisionCode"),
+		Division:     util.GetStringValue(table, row, "division"),
+		TotalPrice:   util.GetInt32Value(table, row, "totalPrice"),
 	}
-
-	return outputDataSlice
 }

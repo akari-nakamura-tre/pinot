@@ -28,3 +28,12 @@ func GetInt32Value(table *pinot.ResultTable, row []interface{}, columnName strin
 	}
 	return 0
 }
+
+func CreateJSONResponse(brokerResp *pinot.BrokerResponse, mappingFunc func(*pinot.ResultTable, []interface{}) interface{}) []interface{} {
+	var outputDataSlice []interface{}
+	for _, row := range brokerResp.ResultTable.Rows {
+		data := mappingFunc(brokerResp.ResultTable, row)
+		outputDataSlice = append(outputDataSlice, data)
+	}
+	return outputDataSlice
+}

@@ -2,16 +2,16 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/akari-nakamura-tre/pinot/models"
+	"github.com/akari-nakamura-tre/pinot/packages/util"
 	"github.com/akari-nakamura-tre/pinot/repositories"
 	"github.com/labstack/gommon/log"
 	"github.com/startreedata/pinot-client-go/pinot"
 )
 
 type IdPOSService interface {
-	GetIdPOS(ctx context.Context, limit int) []models.OutputData
+	GetIdPOS(ctx context.Context, limit int) []interface{}
 }
 
 type idPOSService struct {
@@ -22,64 +22,38 @@ func NewIdPOSService(idPOSRepo repositories.IdPOSRepository) *idPOSService {
 	return &idPOSService{idPOSRepo: idPOSRepo}
 }
 
-func (s *idPOSService) GetIdPOS(ctx context.Context, limit int) []models.OutputData {
+func (s *idPOSService) GetIdPOS(ctx context.Context, limit int) []interface{} {
 	res, err := s.idPOSRepo.GetIdPOS(ctx, limit)
 	if err != nil {
 		log.Error(err)
 	}
-	jsonRes := jsonResponse(res)
+	jsonRes := util.CreateJSONResponse(res, mapIdPOSBrokerResponse)
 	return jsonRes
 }
 
-func getStringValue(table *pinot.ResultTable, row []interface{}, columnName string) string {
-	for i, name := range table.DataSchema.ColumnNames {
-		if name == columnName {
-			return row[i].(string)
-		}
+func mapIdPOSBrokerResponse(table *pinot.ResultTable, row []interface{}) interface{} {
+	return models.OutputData{
+		Area:                   util.GetStringValue(table, row, "area"),
+		AreaCode:               util.GetInt32Value(table, row, "areaCode"),
+		BusinessDepartment:     util.GetStringValue(table, row, "businessDepartment"),
+		BusinessDepartmentCode: util.GetInt32Value(table, row, "businessDepartmentCode"),
+		CustomerCount:          util.GetInt32Value(table, row, "customerCount"),
+		Date:                   util.GetStringValue(table, row, "date"),
+		Department:             util.GetStringValue(table, row, "department"),
+		DepartmentCode:         util.GetInt32Value(table, row, "departmentCode"),
+		Division:               util.GetStringValue(table, row, "division"),
+		DivisionCode:           util.GetInt32Value(table, row, "divisionCode"),
+		Jan:                    util.GetStringValue(table, row, "jan"),
+		Line:                   util.GetStringValue(table, row, "line"),
+		LineCode:               util.GetInt32Value(table, row, "lineCode"),
+		ProductName:            util.GetStringValue(table, row, "productName"),
+		SalesQuantity:          util.GetInt32Value(table, row, "salesQuantity"),
+		Store:                  util.GetStringValue(table, row, "store"),
+		StoreCode:              util.GetInt32Value(table, row, "storeCode"),
+		Team:                   util.GetStringValue(table, row, "team"),
+		TeamCode:               util.GetInt32Value(table, row, "teamCode"),
+		TotalPrice:             util.GetInt32Value(table, row, "totalPrice"),
+		Zone:                   util.GetStringValue(table, row, "zone"),
+		ZoneCode:               util.GetInt32Value(table, row, "zoneCode"),
 	}
-	return ""
-}
-
-func getInt32Value(table *pinot.ResultTable, row []interface{}, columnName string) int32 {
-	for i, name := range table.DataSchema.ColumnNames {
-		if name == columnName {
-			val, _ := row[i].(json.Number)
-			int64Val, _ := val.Int64()
-			return int32(int64Val)
-		}
-	}
-	return 0
-}
-
-func jsonResponse(brokerResp *pinot.BrokerResponse) []models.OutputData {
-	var outputDataSlice []models.OutputData
-	for _, row := range brokerResp.ResultTable.Rows {
-		data := models.OutputData{
-			Area:                   getStringValue(brokerResp.ResultTable, row, "area"),
-			AreaCode:               getInt32Value(brokerResp.ResultTable, row, "areaCode"),
-			BusinessDepartment:     getStringValue(brokerResp.ResultTable, row, "businessDepartment"),
-			BusinessDepartmentCode: getInt32Value(brokerResp.ResultTable, row, "businessDepartmentCode"),
-			CustomerCount:          getInt32Value(brokerResp.ResultTable, row, "customerCount"),
-			Date:                   getStringValue(brokerResp.ResultTable, row, "date"),
-			Department:             getStringValue(brokerResp.ResultTable, row, "department"),
-			DepartmentCode:         getInt32Value(brokerResp.ResultTable, row, "departmentCode"),
-			Division:               getStringValue(brokerResp.ResultTable, row, "division"),
-			DivisionCode:           getInt32Value(brokerResp.ResultTable, row, "divisionCode"),
-			Jan:                    getStringValue(brokerResp.ResultTable, row, "jan"),
-			Line:                   getStringValue(brokerResp.ResultTable, row, "line"),
-			LineCode:               getInt32Value(brokerResp.ResultTable, row, "lineCode"),
-			ProductName:            getStringValue(brokerResp.ResultTable, row, "productName"),
-			SalesQuantity:          getInt32Value(brokerResp.ResultTable, row, "salesQuantity"),
-			Store:                  getStringValue(brokerResp.ResultTable, row, "store"),
-			StoreCode:              getInt32Value(brokerResp.ResultTable, row, "storeCode"),
-			Team:                   getStringValue(brokerResp.ResultTable, row, "team"),
-			TeamCode:               getInt32Value(brokerResp.ResultTable, row, "teamCode"),
-			TotalPrice:             getInt32Value(brokerResp.ResultTable, row, "totalPrice"),
-			Zone:                   getStringValue(brokerResp.ResultTable, row, "zone"),
-			ZoneCode:               getInt32Value(brokerResp.ResultTable, row, "zoneCode"),
-		}
-		outputDataSlice = append(outputDataSlice, data)
-	}
-
-	return outputDataSlice
 }
