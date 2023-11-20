@@ -83,8 +83,10 @@
     },
     {
       "name": "customerCount",
-      "dataType": "STRING"
-    },
+      "dataType": "INT"
+    }
+  ],
+  "metricFieldSpecs": [
     {
       "name": "totalPrice",
       "dataType": "INT"
