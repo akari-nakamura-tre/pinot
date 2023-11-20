@@ -5,6 +5,9 @@ up:
 	make wait_health
 	make db_seed
 
+down:
+	docker compose down
+
 wait_health:
 	@echo "Waiting for Pinot to be ready..."
 	@until [ $$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000/health) -eq 200 ]; do \
