@@ -6,43 +6,11 @@
       "dataType": "STRING"
     },
     {
-      "name": "zoneCode",
-      "dataType": "INT"
-    },
-    {
-      "name": "zone",
-      "dataType": "STRING"
-    },
-    {
-      "name": "areaCode",
-      "dataType": "INT"
-    },
-    {
-      "name": "area",
-      "dataType": "STRING"
-    },
-    {
-      "name": "teamCode",
-      "dataType": "INT"
-    },
-    {
-      "name": "team",
-      "dataType": "STRING"
-    },
-    {
       "name": "storeCode",
       "dataType": "INT"
     },
     {
       "name": "store",
-      "dataType": "STRING"
-    },
-    {
-      "name": "businessDepartmentCode",
-      "dataType": "INT"
-    },
-    {
-      "name": "businessDepartment",
       "dataType": "STRING"
     },
     {
@@ -52,38 +20,6 @@
     {
       "name": "division",
       "dataType": "STRING"
-    },
-    {
-      "name": "lineCode",
-      "dataType": "INT"
-    },
-    {
-      "name": "line",
-      "dataType": "STRING"
-    },
-    {
-      "name": "departmentCode",
-      "dataType": "INT"
-    },
-    {
-      "name": "department",
-      "dataType": "STRING"
-    },
-    {
-      "name": "jan",
-      "dataType": "STRING"
-    },
-    {
-      "name": "productName",
-      "dataType": "STRING"
-    },
-    {
-      "name": "salesQuantity",
-      "dataType": "INT"
-    },
-    {
-      "name": "customerCount",
-      "dataType": "INT"
     }
   ],
   "metricFieldSpecs": [
