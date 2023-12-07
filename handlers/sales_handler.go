@@ -26,7 +26,10 @@ func NewSalesHandler(salesSvc services.SalesService) *salesHandler {
 
 func (h *salesHandler) GetSalesSummaryGroupByStoreAndDivision(c echo.Context) error {
 	ctx := c.Request().Context()
-	res := h.salesSvc.GetSalesSummaryGroupByStoreAndDivision(ctx)
+	res, err := h.salesSvc.GetSalesSummaryGroupByStoreAndDivision(ctx)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data": res,
 	})
